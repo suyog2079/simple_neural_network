@@ -27,6 +27,7 @@ int main()
 	int i,j;
 	printf("0 to train, 1 to test");
 	scanf("%d",&ans);
+	printf("hello");
 	if(ans==0)
 	{
 		train();
@@ -36,6 +37,4 @@ int main()
 		run();
 	}
 
-//	printf("the matrix as read is : \n");
-//	print_matrix(n,*w);
 }

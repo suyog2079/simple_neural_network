@@ -6,9 +6,9 @@ FILE *w3p;
 
 void write_weights(int n, float *w1,float *w2, float *w3) //to store the final weights after training
 {
-	w1p = fopen("weights/w1.bin","w");
-	w2p = fopen("weights/w2.bin","w");
-	w3p = fopen("weights/w3.bin","w");
+	w1p = fopen("weights/w1.txt","w");
+	w2p = fopen("weights/w2.txt","w");
+	w3p = fopen("weights/w3.txt","w");
 	int i,j;
 
 	if(w1 == NULL || w2 == NULL || w3 == NULL || w1p == NULL || w2p == NULL || w3p == NULL) return;
@@ -49,9 +49,9 @@ void init_weights(int n, float *w1,float *w2, float *w3) //to read the value of 
 {
 	int i,j;
 
-	w1p = fopen("weights/w1.bin","r");
-	w2p = fopen("weights/w2.bin","r");
-	w3p = fopen("weights/w3.bin","r");
+	w1p = fopen("weights/w1.txt","r");
+	w2p = fopen("weights/w2.txt","r");
+	w3p = fopen("weights/w3.txt","r");
 
 	if(w1p == NULL || w2p == NULL || w3p == NULL)
 	{
