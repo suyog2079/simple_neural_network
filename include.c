@@ -1,111 +1,166 @@
 #include <stdio.h>
-#include "network.c"
-FILE *w1p;
-FILE *w2p;
-FILE *w3p;
+#include "init_image.c"
 
-void write_weights(int n, float *w1,float *w2, float *w3) //to store the final weights after training
+FILE *i_l1;
+FILE *l1_l2;
+FILE *l2_l3;
+FILE *l3_o;
+
+float w_inp_l1[784][1000];
+float w_l1_l2[1000][1000];
+float w_l2_l3[1000][1000];
+float w_l3_out[1000][9];
+
+float inp[1][784];
+float l1[1][1000];
+float l2[1][1000];
+float l3[1][1000];
+float out[1][10];
+
+void write_weights() //to store the final weights after training
 {
-	w1p = fopen("weights/w1.txt","wb");
-	w2p = fopen("weights/w2.txt","wb");
-	w3p = fopen("weights/w3.txt","wb");
 	int i,j;
 
-	if(w1 == NULL || w2 == NULL || w3 == NULL || w1p == NULL || w2p == NULL || w3p == NULL) return;
+	i_l1  = fopen("weights/w_inp_l1.txt","wb");
+	l1_l2 = fopen("weights/w_l1_l2.txt","wb");
+	l2_l3 = fopen("weights/w_l2_l3.txt","wb");
+	l3_o  = fopen("weights/w_l3_out.txt","wb");
 
-	for (i=0; i<n; i++) {
-		for (j=0; j<n; j++) {
-//			fwrite(((w1+i)+j), sizeof(float), 1, w1p);
-//			fwrite(((w2+i)+j), sizeof(float), 1, w2p);
-//			fwrite(((w3+i)+j), sizeof(float), 1, w3p);
-			fprintf(w1p, "%f \t",*((w1+i)+j));
-			fprintf(w2p, "%f\t",*((w2+i)+j));
-			fprintf(w3p, "%f\t",*((w3+i)+j));
+	for(i=0;i<1000;i++)
+	{
+		for(j=0;j<1000;j++)
+		{
+			fprintf(l1_l2,"%f",w_l1_l2[i][j]);
+			fprintf(l2_l3,"%f",w_l2_l3[i][j]);
 		}
 	}
-	fclose(w1p);
-	fclose(w2p);
-	fclose(w3p);
-}
 
-void write(int n, float *w1, float *w2, float *w3) //to initialize the weights at first iteration
-{
-	int i,j;
-	//	printf("in write ");
-	if(w1 == NULL || w2 == NULL || w3 == NULL)
+	for(i=0;i<784;i++)
 	{
-		printf("null");
-		return;
-	}
-
-	for (i=0; i<n; i++) {
-		for (j=0; j<n; j++) {
-			*((w1+i)+j) = 5.0f;
-			*((w2+i)+j) = 2.0f;
-			*((w3+i)+j) = 3.0f;
+		for(j=0;j<1000;j++)
+		{
+			fprintf(i_l1,"%f",w_inp_l1[i][j]);
 		}
 	}
-	write_weights(n,w1,w2,w3);
+
+	for(i=0;i<1000;i++)
+	{
+		for(j=0;j<10;j++)
+		{
+			fprintf(l3_o,"%f",w_l3_out[i][j]);
+		}
+	}
+
+	fclose(i_l1);
+	fclose(l1_l2);
+	fclose(l2_l3);
+	fclose(l3_o);
 }
 
-void init_weights(int n, float *w1,float *w2, float *w3) //to read the value of weights from the file and store them in weights array
+void write_first() //to initialize the weights at first iteration
 {
 	int i,j;
 
-	w1p = fopen("weights/w1.txt","rb");
-	w2p = fopen("weights/w2.txt","rb");
-	w3p = fopen("weights/w3.txt","rb");
-
-	if(w1p == NULL || w2p == NULL || w3p == NULL)
+	for(i=0;i<1000;i++)
 	{
-		write(n,w1,w2,w3);
+		for(j=0;j<1000;j++)
+		{
+			w_l1_l2[i][j] = 0.00f;
+			w_l2_l3[i][j] = 0.00f;
+		}
+	}
+
+	for(i=0;i<784;i++)
+	{
+		for(j=0;j<1000;j++)
+		{
+			w_inp_l1[i][j] = 0.00f;
+		}
+	}
+
+	for(i=0;i<1000;i++)
+	{
+		for(j=0;j<10;j++)
+		{
+			w_l3_out[i][j] = 0.00f;
+		}
+	}
+
+	write_weights();
+}
+
+void read_weights() //to read the value of weights from the file and store them in weights array
+{
+	int i,j;
+
+	i_l1  = fopen("weights/w_inp_l1.txt","rb");
+	l1_l2 = fopen("weights/w_l1_l2.txt","rb");
+	l2_l3 = fopen("weights/w_l2_l3.txt","rb");
+	l3_o  = fopen("weights/w_l3_out.txt","rb");
+
+	if(i_l1 == NULL || l1_l2 == NULL || l2_l3 == NULL || l3_o == NULL)
+	{
+		write_first();
 		return;
 	}
 		
-	for(i=0; i<n ; i++) {
-		for (j=0; j<n ; j++) {
-//			fread(((w1+i)+j), sizeof(float), 1, w1p);
-//			fread(((w1+i)+j), sizeof(float), 1, w1p);
-//			fread(((w1+i)+j), sizeof(float), 1, w1p);
-			fscanf(w1p, "%f", ((w1+i)+j));
-			fscanf(w2p, "%f", ((w2+i)+j));
-			fscanf(w3p, "%f", ((w3+i)+j));
-		}	
-		printf("\n");
+	for(i=0;i<1000;i++)
+	{
+		for(j=0;j<1000;j++)
+		{
+			fscanf(l1_l2,"%f",&w_l1_l2[i][j]);
+			fscanf(l2_l3,"%f",&w_l2_l3[i][j]);
+		}
 	}
 
-	fclose(w1p);
-	fclose(w2p);
-	fclose(w3p);
-}
+	for(i=0;i<784;i++)
+	{
+		for(j=0;j<1000;j++)
+		{
+			fscanf(i_l1,"%f",&w_inp_l1[i][j]);
+		}
+	}
 
-void print_matrix(int n, float *w1,float *w2, float *w3)
+	for(i=0;i<1000;i++)
+	{
+		for(j=0;j<10;j++)
+		{
+			fscanf(l3_o,"%f",&w_l3_out[i][j]);
+		}
+	}
+
+	fclose(i_l1);
+	fclose(l1_l2);
+	fclose(l2_l3);
+	fclose(l3_o);
+} 
+
+float relu(float x)
 {
-	if(w1 == NULL || w2 == NULL || w3 == NULL) return;
-
-	int i,j;
-	printf("here is w1: \n");
-	
-	for (i=0; i<n; i++) {
-		for (j=0; j<n; j++) {
-			printf("%f \t ", *((w1+i)+j));
-		}
-		printf("\n");
+	if(x<=0)
+	{
+		return 0;
 	}
 
-	printf("here is w2: \n");
-	for (i=0; i<n; i++) {
-		for (j=0; j<n; j++) {
-			printf("%f \t ", *((w2+i)+j));
-		}
-		printf("\n");
-	}	
+	else return x;
+}
 
-	printf("here is w3: \n");
-	for (i=0; i<n; i++) {
-		for (j=0; j<n; j++) {
-			printf("%f \t ", *((w3+i)+j));
-		}
-		printf("\n");
+void start_training()
+{
+	int i;
+	for (i=0; i < 60000; i++)
+	{
+		init_input_layer_for_train(*inp,i);
+
 	}
 }
+
+void backprop()
+{
+}
+
+void error()
+{
+}
+
+
