@@ -1,5 +1,3 @@
-#include "include.c"
-
 int run_network(int index)
 {
 	return 0;

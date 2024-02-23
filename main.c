@@ -17,7 +17,9 @@ void train()
 
 void run()
 {
-	int input,prediction;
+	int index;
+	printf("enter the index you wanna test \n");
+	scanf("%d",&index);
 	init_weights(n,*w1,*w2,*w3);
 }
 
@@ -27,7 +29,6 @@ int main()
 	int i,j;
 	printf("0 to train, 1 to test");
 	scanf("%d",&ans);
-	printf("hello");
 	if(ans==0)
 	{
 		train();

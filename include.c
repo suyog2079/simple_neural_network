@@ -1,23 +1,26 @@
 #include <stdio.h>
-
+#include "network.c"
 FILE *w1p;
 FILE *w2p;
 FILE *w3p;
 
 void write_weights(int n, float *w1,float *w2, float *w3) //to store the final weights after training
 {
-	w1p = fopen("weights/w1.txt","w");
-	w2p = fopen("weights/w2.txt","w");
-	w3p = fopen("weights/w3.txt","w");
+	w1p = fopen("weights/w1.txt","wb");
+	w2p = fopen("weights/w2.txt","wb");
+	w3p = fopen("weights/w3.txt","wb");
 	int i,j;
 
 	if(w1 == NULL || w2 == NULL || w3 == NULL || w1p == NULL || w2p == NULL || w3p == NULL) return;
 
 	for (i=0; i<n; i++) {
 		for (j=0; j<n; j++) {
-			fwrite(((w1+i)+j), sizeof(1.00f), 1, w1p);
-			fwrite(((w2+i)+j), sizeof(1.00f), 1, w2p);
-			fwrite(((w3+i)+j), sizeof(1.00f), 1, w3p);
+//			fwrite(((w1+i)+j), sizeof(float), 1, w1p);
+//			fwrite(((w2+i)+j), sizeof(float), 1, w2p);
+//			fwrite(((w3+i)+j), sizeof(float), 1, w3p);
+			fprintf(w1p, "%f \t",*((w1+i)+j));
+			fprintf(w2p, "%f\t",*((w2+i)+j));
+			fprintf(w3p, "%f\t",*((w3+i)+j));
 		}
 	}
 	fclose(w1p);
@@ -49,22 +52,24 @@ void init_weights(int n, float *w1,float *w2, float *w3) //to read the value of 
 {
 	int i,j;
 
-	w1p = fopen("weights/w1.txt","r");
-	w2p = fopen("weights/w2.txt","r");
-	w3p = fopen("weights/w3.txt","r");
+	w1p = fopen("weights/w1.txt","rb");
+	w2p = fopen("weights/w2.txt","rb");
+	w3p = fopen("weights/w3.txt","rb");
 
 	if(w1p == NULL || w2p == NULL || w3p == NULL)
 	{
 		write(n,w1,w2,w3);
-		printf("nulllllllllllllllllllllllllllllllllllllll \n ");
 		return;
 	}
 		
 	for(i=0; i<n ; i++) {
 		for (j=0; j<n ; j++) {
-			fread(((w1+i)+j), sizeof(1.00f), 1, w1p);
-			fread(((w1+i)+j), sizeof(1.00f), 1, w1p);
-			fread(((w1+i)+j), sizeof(1.00f), 1, w1p);
+//			fread(((w1+i)+j), sizeof(float), 1, w1p);
+//			fread(((w1+i)+j), sizeof(float), 1, w1p);
+//			fread(((w1+i)+j), sizeof(float), 1, w1p);
+			fscanf(w1p, "%f", ((w1+i)+j));
+			fscanf(w2p, "%f", ((w2+i)+j));
+			fscanf(w3p, "%f", ((w3+i)+j));
 		}	
 		printf("\n");
 	}
