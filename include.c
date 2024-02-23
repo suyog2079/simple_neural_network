@@ -145,13 +145,27 @@ float relu(float x)
 	else return x;
 }
 
+float *multiply(float *input_matrix ,float *weight ,float *output)
+{
+	return 0;
+}
+
+void forward_prop()
+{
+	multiply(*inp,*w_inp_l1,*l1);
+	multiply(*l1,*w_l1_l2,*l2);
+	multiply(*l2,*w_l2_l3,*l3);
+	multiply(*l3,*w_l3_out,*out);
+}
+
 void start_training()
 {
-	int i;
+	float img[1][784];
+	int i,j,label;
 	for (i=0; i < 60000; i++)
 	{
-		init_input_layer_for_train(*inp,i);
-
+		label = init_input_layer_for_train(*inp,i);
+		forward_prop();
 	}
 }
 
