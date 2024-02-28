@@ -11,11 +11,11 @@ float w_l1_l2[1000][1000];
 float w_l2_l3[1000][1000];
 float w_l3_out[1000][9];
 
-float inp[1][784];
-float l1[1][1000];
-float l2[1][1000];
-float l3[1][1000];
-float out[1][10];
+float inp[784];
+float l1[1000];
+float l2[1000];
+float l3[1000];
+float out[10];
 
 void write_weights() //to store the final weights after training
 {
@@ -25,7 +25,6 @@ void write_weights() //to store the final weights after training
 	l1_l2 = fopen("weights/w_l1_l2.txt","wb");
 	l2_l3 = fopen("weights/w_l2_l3.txt","wb");
 	l3_o  = fopen("weights/w_l3_out.txt","wb");
-
 	for(i=0;i<1000;i++)
 	{
 		for(j=0;j<1000;j++)
@@ -103,7 +102,7 @@ void read_weights() //to read the value of weights from the file and store them 
 		write_first();
 		return;
 	}
-		
+
 	for(i=0;i<1000;i++)
 	{
 		for(j=0;j<1000;j++)
@@ -145,17 +144,26 @@ float relu(float x)
 	else return x;
 }
 
-float *multiply(float *input_matrix ,float *weight ,float *output)
+void multiply(float *input_matrix ,float *weights ,float *output, int n, int on)// n --> [1][n] of input matrix, on --> [1][on] of output matrix
 {
-	return 0;
+	int i=0,j=0;
+	float d=0.00f;
+	for(i=0;i<on;i++)
+	{
+		for (j=0; j<n; j++) {
+			d += relu(input_matrix[j]) * (*((weights+(on*j))+i));		
+		}
+		output[i] = d;
+		d=0;
+	}
 }
 
 void forward_prop()
 {
-	multiply(*inp,*w_inp_l1,*l1);
-	multiply(*l1,*w_l1_l2,*l2);
-	multiply(*l2,*w_l2_l3,*l3);
-	multiply(*l3,*w_l3_out,*out);
+	multiply(inp,*w_inp_l1,l1,784,1000);
+	multiply(l1,*w_l1_l2,l2,1000,1000);
+	multiply(l2,*w_l2_l3,l3,1000,1000);
+	multiply(l3,*w_l3_out,out,1000,10);
 }
 
 void start_training()
@@ -164,7 +172,7 @@ void start_training()
 	int i,j,label;
 	for (i=0; i < 60000; i++)
 	{
-		label = init_input_layer_for_train(*inp,i);
+		label = init_input_layer_for_train(inp,i);
 		forward_prop();
 	}
 }
@@ -176,5 +184,3 @@ void backprop()
 void error()
 {
 }
-
-
