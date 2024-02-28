@@ -64,8 +64,8 @@ void write_first() //to initialize the weights at first iteration
 	{
 		for(j=0;j<1000;j++)
 		{
-			w_l1_l2[i][j] = 0.00f;
-			w_l2_l3[i][j] = 0.00f;
+			w_l1_l2[i][j] = 0.00;
+			w_l2_l3[i][j] = 0.00;
 		}
 	}
 
@@ -73,7 +73,7 @@ void write_first() //to initialize the weights at first iteration
 	{
 		for(j=0;j<1000;j++)
 		{
-			w_inp_l1[i][j] = 0.00f;
+			w_inp_l1[i][j] = 0.00;
 		}
 	}
 
@@ -81,7 +81,7 @@ void write_first() //to initialize the weights at first iteration
 	{
 		for(j=0;j<10;j++)
 		{
-			w_l3_out[i][j] = 0.00f;
+			w_l3_out[i][j] = 0.00;
 		}
 	}
 
@@ -157,13 +157,49 @@ void multiply(float *input_matrix ,float *weights ,float *output, int n, int on)
 		d=0;
 	}
 }
-
-void forward_prop()
+void probability_density()
 {
+	float sum=0.00;
+	int i;
+	for(i=0;i<10;i++)
+	{
+		sum += out[i];
+	}
+
+	for(i=0;i<10;i++)
+	{
+		out[i] = (out[i]/sum)*1.00;
+	}
+}
+
+float cost_function(int label)
+{
+	int i;
+	float cost;
+	for(i=0;i<10;i++)
+	{
+		if(i == label)
+		{
+			cost += (out[i]-1)*(out[i]-1);
+		}
+		else
+		{
+			cost += out[i]*out[i];			
+		}
+
+	}
+	return cost;
+}
+
+void forward_prop(int label)
+{
+	float cost;
 	multiply(inp,*w_inp_l1,l1,784,1000);
 	multiply(l1,*w_l1_l2,l2,1000,1000);
 	multiply(l2,*w_l2_l3,l3,1000,1000);
 	multiply(l3,*w_l3_out,out,1000,10);
+	probability_density();
+	cost = cost_function(label);
 }
 
 void start_training()
@@ -173,7 +209,7 @@ void start_training()
 	for (i=0; i < 60000; i++)
 	{
 		label = init_input_layer_for_train(inp,i);
-		forward_prop();
+		forward_prop(label);
 	}
 }
 
